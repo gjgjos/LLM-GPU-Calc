@@ -73,7 +73,7 @@ def calculate_required_gpu_memory(model_name, concurrent_users, seq_len, gpu_uti
 
     # Calculate components
     model_weight = num_params * PARAMETER_DATA_TYPE_SIZE[data_type]
-    pytorch_activation_peak_memory = seq_len * concurrent_users * (18 * hidden_size + 4 * intermediate_size)
+    pytorch_activation_peak_memory = seq_len * 1 * (18 * hidden_size + 4 * intermediate_size)
     kv_cache_memory_per_batch = (
         2 * num_key_value_heads * head_dim * num_layers * KV_DATA_TYPE_SIZE[kv_data_type] * seq_len
     )
@@ -108,7 +108,7 @@ def calculate_required_gpu_memory(model_name, concurrent_users, seq_len, gpu_uti
     2. **Non-Torch Memory**: {NON_TORCH_MEMORY_MB / 1024:.3f} GB  
        Computed as a constant value of 1 GB
     3. **PyTorch Activation Peak Memory**: {pytorch_activation_peak_memory / (1024**3):.3f} GB  
-       Computed as: `concurrent_users x seq_len x (18 x hidden_size + 4 x intermediate_size)`
+       Computed as: `seq_len x (18 x hidden_size + 4 x intermediate_size)`
     4. **KV Cache Memory Per Batch**: {kv_cache_memory_per_batch / (1024**3):.3f} GB  
        Computed as: `2 x num_key_value_heads x head_dim x num_layers x size of KV data type x seq_len`
     5. **Total KV Cache Memory**: {total_kv_cache_memory / (1024**3):.3f} GB  
