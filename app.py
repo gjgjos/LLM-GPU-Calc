@@ -1,6 +1,5 @@
 import streamlit as st
 from transformers import AutoConfig
-import math
 import requests
 
 # Constants
