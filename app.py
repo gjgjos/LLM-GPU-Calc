@@ -1,6 +1,8 @@
+import json
+
+import requests
 import streamlit as st
 from transformers import AutoConfig
-import requests
 
 # Constants
 DEFAULT_GPU_UTILIZATION = 0.9
@@ -119,6 +121,20 @@ def calculate_required_gpu_memory(model_name, concurrent_users, seq_len, gpu_uti
 
     return required_gpu_memory_gb, explanation, process_steps
 
+def dump_explanation(explanation):
+    # add model name and input parameters
+    explanation["model_name"] = model_name
+    explanation["input_parameters"] = {
+        "concurrent_users": concurrent_users,
+        "seq_len": seq_len,
+        "gpu_utilization": gpu_utilization,
+        "data_type": data_type,
+        "kv_data_type": kv_data_type,
+    }
+    # convert to json
+    explanation_json = json.dumps(explanation, indent=4, ensure_ascii=False)
+    return explanation_json
+
 # Streamlit UI
 st.set_page_config(layout="wide")
 
@@ -176,3 +192,12 @@ with st.container():
                 st.markdown("##### Calculation Details")
                 st.json(explanation)
                 st.markdown(process_steps)
+                # button to save the output json in a file
+                st.markdown("---")
+                st.download_button(
+                    label="Download Calculation Details",
+                    data=dump_explanation(explanation),
+                    file_name=f"{model_name}_gpu_memory_calculation.json",
+                    # json
+                    mime="text/plain",
+                )
